@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "SOVOPT-MSVC",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/19.51.36256/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "windows-msvc-x64",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/sovopt",
+                "${workspaceFolder}/include/sovopt/core",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/core",
+                "${workspaceFolder}"
+            ],
+            "defines": [
+                "_CRT_SECURE_NO_WARNINGS"
+            ]
+        }
+    ],
+    "version": 4
+}

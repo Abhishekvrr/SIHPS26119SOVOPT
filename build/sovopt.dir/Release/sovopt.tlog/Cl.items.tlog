@@ -1,0 +1,12 @@
+C:\Projects\SOVOPT\src\main.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\main.obj
+C:\Projects\SOVOPT\src\core\variable.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\variable.obj
+C:\Projects\SOVOPT\src\core\constraint.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\constraint.obj
+C:\Projects\SOVOPT\src\core\objective.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\objective.obj
+C:\Projects\SOVOPT\src\core\model.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\model.obj
+C:\Projects\SOVOPT\src\math\vector.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\vector.obj
+C:\Projects\SOVOPT\src\math\sparse_matrix.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\sparse_matrix.obj
+C:\Projects\SOVOPT\src\math\linear_solver.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\linear_solver.obj
+C:\Projects\SOVOPT\src\lp\lp_model.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\lp_model.obj
+C:\Projects\SOVOPT\src\lp\lp_result.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\lp_result.obj
+C:\Projects\SOVOPT\src\lp\lp_solver.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\lp_solver.obj
+C:\Projects\SOVOPT\src\lp\simplex_solver.cpp;C:\Projects\SOVOPT\build\sovopt.dir\Release\simplex_solver.obj

@@ -1,0 +1,10 @@
+^C:\PROJECTS\SOVOPT\BUILD\CMAKEFILES\2E5B24B5642F54C27630F63D222DB0E8\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Projects/SOVOPT -BC:/Projects/SOVOPT/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Projects/SOVOPT/build/SOVOPT.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
