@@ -33,6 +33,7 @@ std::size_t LPModel::add_variable(
     });
 
     objective_.push_back(0.0);
+    matrix_.set_dimensions(constraints_.size(), variables_.size());
 
     return variables_.size() - 1;
 }
@@ -52,6 +53,8 @@ std::size_t LPModel::add_constraint(
         sense,
         rhs
     });
+
+    matrix_.set_dimensions(constraints_.size(), variables_.size());
 
     return constraints_.size() - 1;
 }
@@ -118,8 +121,23 @@ void LPModel::set_constraint_sense(
     constraints_[constraint].sense = sense;
 }
 
+void LPModel::set_variable_bounds(
+    std::size_t variable,
+    double lower_bound,
+    double upper_bound)
+{
+    if (variable >= variables_.size()) {
+        throw std::out_of_range(
+            "Variable index out of range");
+    }
+
+    variables_[variable].lower_bound = lower_bound;
+    variables_[variable].upper_bound = upper_bound;
+}
+
 void LPModel::finalize()
 {
+    matrix_.set_dimensions(constraints_.size(), variables_.size());
     matrix_.finalize();
     finalized_ = true;
 }
@@ -147,9 +165,9 @@ bool LPModel::validate(std::string& error) const
     }
 
     for (const auto& variable : variables_) {
-        if (!std::isfinite(variable.lower_bound) ||
-            !std::isfinite(variable.upper_bound)) {
-            error = "Variable bounds must be finite";
+        if (std::isnan(variable.lower_bound) ||
+            std::isnan(variable.upper_bound)) {
+            error = "Variable bounds cannot be NaN";
             return false;
         }
 

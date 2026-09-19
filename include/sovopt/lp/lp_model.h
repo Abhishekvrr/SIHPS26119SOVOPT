@@ -63,6 +63,11 @@ public:
         std::size_t constraint,
         ConstraintSense sense);
 
+    void set_variable_bounds(
+        std::size_t variable,
+        double lower_bound,
+        double upper_bound);
+
     ObjectiveSense objective_sense() const noexcept {
         return objective_sense_;
     }

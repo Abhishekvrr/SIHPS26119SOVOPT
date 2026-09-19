@@ -1,0 +1,8 @@
+product,available_crude_tpd,crude_cost_inr_per_ton,processing_capacity_tpd,demand_tpd,product_yield,processing_cost_inr_per_ton,selling_price_inr_per_ton,energy_cost_inr_per_ton,quality_index
+Petrol,5000,42000,4800,4000,0.42,3200,62000,1800,92
+Diesel,5000,42000,5200,4500,0.38,3000,58000,1600,89
+Jet_Fuel,3000,42000,2800,2200,0.18,3600,72000,2200,95
+LPG,2000,42000,1800,1500,0.12,2800,54000,1400,88
+Naphtha,2500,42000,2200,1800,0.20,2600,50000,1300,85
+Propylene,1500,42000,1200,1000,0.15,4100,68000,2500,91
+

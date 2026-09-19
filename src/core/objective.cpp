@@ -1,28 +1,17 @@
-#include "objective.h"
-
-#include <cmath>
-#include <stdexcept>
-#include <utility>
+#include "sovopt/core/objective.h"
 
 namespace sovopt::core
 {
 
 Objective::Objective(
     OptimizationSense sense,
-    std::vector<LinearTerm> terms
+    std::vector<LinearTerm> terms,
+    std::vector<QuadraticObjectiveTerm> quadratic_terms
 )
     : sense_(sense),
-      terms_(std::move(terms))
+      terms_(std::move(terms)),
+      quadratic_terms_(std::move(quadratic_terms))
 {
-    for (const auto& term : terms_)
-    {
-        if (!std::isfinite(term.coefficient))
-        {
-            throw std::invalid_argument(
-                "Objective contains a non-finite coefficient."
-            );
-        }
-    }
 }
 
 OptimizationSense Objective::sense() const noexcept
@@ -33,6 +22,16 @@ OptimizationSense Objective::sense() const noexcept
 const std::vector<LinearTerm>& Objective::terms() const noexcept
 {
     return terms_;
+}
+
+const std::vector<QuadraticObjectiveTerm>& Objective::quadratic_terms() const noexcept
+{
+    return quadratic_terms_;
+}
+
+bool Objective::is_quadratic() const noexcept
+{
+    return !quadratic_terms_.empty();
 }
 
 } // namespace sovopt::core

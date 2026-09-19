@@ -1,0 +1,8 @@
+product,max_demand_tons_per_day,margin_inr_per_ton,crude_tons_per_ton,energy_mwh_per_ton,labor_hours_per_ton,water_m3_per_ton,crude_capacity_tons_per_day,energy_capacity_mwh_per_day,labor_capacity_hours_per_day,water_capacity_m3_per_day,objective_sense,data_status,note
+LPG,1500,8000,1.05,0.2,0.08,0.5,8000,2200,1000,7000,maximize_margin,illustrative_demo_values,Product names are MRPL-related; numeric planning coefficients are synthetic and must not be treated as MRPL operational data.
+Naphtha,1000,12000,1.02,0.25,0.1,0.6,8000,2200,1000,7000,maximize_margin,illustrative_demo_values,Product names are MRPL-related; numeric planning coefficients are synthetic and must not be treated as MRPL operational data.
+Motor Spirit,2000,15000,1.1,0.3,0.12,0.8,8000,2200,1000,7000,maximize_margin,illustrative_demo_values,Product names are MRPL-related; numeric planning coefficients are synthetic and must not be treated as MRPL operational data.
+High-Speed Diesel,3500,11000,1.08,0.28,0.1,0.7,8000,2200,1000,7000,maximize_margin,illustrative_demo_values,Product names are MRPL-related; numeric planning coefficients are synthetic and must not be treated as MRPL operational data.
+Aviation Turbine Fuel,1200,16000,1.12,0.35,0.15,1.0,8000,2200,1000,7000,maximize_margin,illustrative_demo_values,Product names are MRPL-related; numeric planning coefficients are synthetic and must not be treated as MRPL operational data.
+Polypropylene,1000,14000,1.15,0.4,0.16,1.2,8000,2200,1000,7000,maximize_margin,illustrative_demo_values,Product names are MRPL-related; numeric planning coefficients are synthetic and must not be treated as MRPL operational data.
+

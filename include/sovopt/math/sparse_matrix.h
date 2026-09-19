@@ -20,6 +20,8 @@ public:
 
     void resize(std::size_t rows, std::size_t columns);
 
+    void set_dimensions(std::size_t rows, std::size_t columns);
+
     void add(std::size_t row, std::size_t column, double value);
 
     void set(std::size_t row, std::size_t column, double value);

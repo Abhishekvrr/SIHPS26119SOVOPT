@@ -35,12 +35,21 @@ public:
         std::vector<LinearTerm> terms
     );
 
+    void set_objective(
+        OptimizationSense sense,
+        std::vector<LinearTerm> terms,
+        std::vector<QuadraticObjectiveTerm> quadratic_terms
+    );
+
     const std::string& name() const noexcept;
 
     const std::vector<Variable>& variables() const noexcept;
     const std::vector<Constraint>& constraints() const noexcept;
 
     const std::optional<Objective>& objective() const noexcept;
+
+    bool is_milp() const noexcept;
+    bool is_qp() const noexcept;
 
 private:
     std::string name_;

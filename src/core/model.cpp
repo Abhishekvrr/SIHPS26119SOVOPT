@@ -1,7 +1,4 @@
-#include "model.h"
-
-#include <stdexcept>
-#include <utility>
+#include "sovopt/core/model.h"
 
 namespace sovopt::core
 {
@@ -9,12 +6,6 @@ namespace sovopt::core
 Model::Model(std::string name)
     : name_(std::move(name))
 {
-    if (name_.empty())
-    {
-        throw std::invalid_argument(
-            "Model name cannot be empty."
-        );
-    }
 }
 
 VariableIndex Model::add_variable(
@@ -25,15 +16,7 @@ VariableIndex Model::add_variable(
 )
 {
     const VariableIndex index = variables_.size();
-
-    variables_.emplace_back(
-        index,
-        name,
-        type,
-        lower_bound,
-        upper_bound
-    );
-
+    variables_.emplace_back(index, name, type, lower_bound, upper_bound);
     return index;
 }
 
@@ -44,26 +27,8 @@ ConstraintIndex Model::add_constraint(
     double rhs
 )
 {
-    for (const auto& term : terms)
-    {
-        if (term.variable >= variables_.size())
-        {
-            throw std::out_of_range(
-                "Constraint references an unknown variable."
-            );
-        }
-    }
-
     const ConstraintIndex index = constraints_.size();
-
-    constraints_.emplace_back(
-        index,
-        name,
-        std::move(terms),
-        sense,
-        rhs
-    );
-
+    constraints_.emplace_back(index, name, std::move(terms), sense, rhs);
     return index;
 }
 
@@ -72,20 +37,16 @@ void Model::set_objective(
     std::vector<LinearTerm> terms
 )
 {
-    for (const auto& term : terms)
-    {
-        if (term.variable >= variables_.size())
-        {
-            throw std::out_of_range(
-                "Objective references an unknown variable."
-            );
-        }
-    }
+    objective_.emplace(sense, std::move(terms));
+}
 
-    objective_.emplace(
-        sense,
-        std::move(terms)
-    );
+void Model::set_objective(
+    OptimizationSense sense,
+    std::vector<LinearTerm> terms,
+    std::vector<QuadraticObjectiveTerm> quadratic_terms
+)
+{
+    objective_.emplace(sense, std::move(terms), std::move(quadratic_terms));
 }
 
 const std::string& Model::name() const noexcept
@@ -106,6 +67,23 @@ const std::vector<Constraint>& Model::constraints() const noexcept
 const std::optional<Objective>& Model::objective() const noexcept
 {
     return objective_;
+}
+
+bool Model::is_milp() const noexcept
+{
+    for (const auto& var : variables_)
+    {
+        if (var.type() == VariableType::Integer || var.type() == VariableType::Binary)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Model::is_qp() const noexcept
+{
+    return objective_.has_value() && objective_->is_quadratic();
 }
 
 } // namespace sovopt::core

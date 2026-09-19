@@ -1,3 +1,0 @@
-C:/Projects/SOVOPT/build/CMakeFiles/sovopt.dir
-C:/Projects/SOVOPT/build/CMakeFiles/ALL_BUILD.dir
-C:/Projects/SOVOPT/build/CMakeFiles/ZERO_CHECK.dir

@@ -2,22 +2,11 @@
 
 #include <algorithm>
 #include <cmath>
-#include <unordered_map>
+#include <stdexcept>
 #include <utility>
 
-namespace sovopt::math {
-
-namespace {
-
-std::size_t makeKey(
-    std::size_t row,
-    std::size_t column,
-    std::size_t columns)
+namespace sovopt::math
 {
-    return row * columns + column;
-}
-
-} // namespace
 
 SparseMatrix::SparseMatrix(
     std::size_t rows,
@@ -39,18 +28,34 @@ void SparseMatrix::resize(
     finalized_ = false;
 }
 
+void SparseMatrix::set_dimensions(
+    std::size_t rows,
+    std::size_t columns)
+{
+    if (finalized_)
+    {
+        throw std::logic_error(
+            "Cannot change dimensions of finalized SparseMatrix.");
+    }
+
+    rows_ = rows;
+    columns_ = columns;
+}
+
 void SparseMatrix::validateIndex(
     std::size_t row,
     std::size_t column) const
 {
-    if (row >= rows_) {
+    if (row >= rows_)
+    {
         throw std::out_of_range(
-            "SparseMatrix row index out of range");
+            "SparseMatrix row index out of range.");
     }
 
-    if (column >= columns_) {
+    if (column >= columns_)
+    {
         throw std::out_of_range(
-            "SparseMatrix column index out of range");
+            "SparseMatrix column index out of range.");
     }
 }
 
@@ -61,20 +66,24 @@ void SparseMatrix::add(
 {
     validateIndex(row, column);
 
-    if (std::abs(value) < 1e-12) {
+    if (finalized_)
+    {
+        throw std::logic_error(
+            "Cannot modify finalized SparseMatrix.");
+    }
+
+    if (std::abs(value) <= 1e-12)
+    {
         return;
     }
 
-    if (finalized_) {
-        throw std::logic_error(
-            "Cannot add entries after matrix finalization");
-    }
-
-    pending_.push_back({
-        row,
-        column,
-        value
-    });
+    pending_.push_back(
+        SparseEntry{
+            row,
+            column,
+            value
+        }
+    );
 }
 
 void SparseMatrix::set(
@@ -84,33 +93,44 @@ void SparseMatrix::set(
 {
     validateIndex(row, column);
 
-    if (finalized_) {
+    if (finalized_)
+    {
         throw std::logic_error(
-            "Cannot modify a finalized sparse matrix");
+            "Cannot modify finalized SparseMatrix.");
     }
 
-    pending_.erase(
-        std::remove_if(
-            pending_.begin(),
-            pending_.end(),
-            [row, column](const SparseEntry& entry) {
-                return entry.row == row &&
-                       entry.column == column;
-            }),
-        pending_.end());
+    for (auto& entry : pending_)
+    {
+        if (entry.row == row &&
+            entry.column == column)
+        {
+            entry.value = value;
 
-    if (std::abs(value) >= 1e-12) {
-        pending_.push_back({
-            row,
-            column,
-            value
-        });
+            if (std::abs(value) <= 1e-12)
+            {
+                entry.value = 0.0;
+            }
+
+            return;
+        }
+    }
+
+    if (std::abs(value) > 1e-12)
+    {
+        pending_.push_back(
+            SparseEntry{
+                row,
+                column,
+                value
+            }
+        );
     }
 }
 
 void SparseMatrix::finalize()
 {
-    if (finalized_) {
+    if (finalized_)
+    {
         return;
     }
 
@@ -118,28 +138,29 @@ void SparseMatrix::finalize()
         pending_.begin(),
         pending_.end(),
         [](const SparseEntry& lhs,
-           const SparseEntry& rhs) {
-
-            if (lhs.row != rhs.row) {
+           const SparseEntry& rhs)
+        {
+            if (lhs.row != rhs.row)
+            {
                 return lhs.row < rhs.row;
             }
 
             return lhs.column < rhs.column;
-        });
+        }
+    );
 
     entries_.clear();
-    entries_.reserve(pending_.size());
 
-    for (const SparseEntry& entry : pending_) {
-
+    for (const auto& entry : pending_)
+    {
         if (!entries_.empty() &&
             entries_.back().row == entry.row &&
-            entries_.back().column == entry.column) {
-
+            entries_.back().column == entry.column)
+        {
             entries_.back().value += entry.value;
-
-        } else {
-
+        }
+        else
+        {
             entries_.push_back(entry);
         }
     }
@@ -148,10 +169,13 @@ void SparseMatrix::finalize()
         std::remove_if(
             entries_.begin(),
             entries_.end(),
-            [](const SparseEntry& entry) {
-                return std::abs(entry.value) < 1e-12;
-            }),
-        entries_.end());
+            [](const SparseEntry& entry)
+            {
+                return std::abs(entry.value) <= 1e-12;
+            }
+        ),
+        entries_.end()
+    );
 
     pending_.clear();
 
@@ -164,44 +188,16 @@ double SparseMatrix::get(
 {
     validateIndex(row, column);
 
-    if (!finalized_) {
+    const auto& source =
+        finalized_ ? entries_ : pending_;
 
-        double result = 0.0;
-
-        for (const SparseEntry& entry : pending_) {
-
-            if (entry.row == row &&
-                entry.column == column) {
-
-                result += entry.value;
-            }
+    for (const auto& entry : source)
+    {
+        if (entry.row == row &&
+            entry.column == column)
+        {
+            return entry.value;
         }
-
-        return result;
-    }
-
-    const auto iterator = std::lower_bound(
-        entries_.begin(),
-        entries_.end(),
-        std::pair<std::size_t, std::size_t>{
-            row,
-            column
-        },
-        [](const SparseEntry& entry,
-           const std::pair<std::size_t, std::size_t>& key) {
-
-            if (entry.row != key.first) {
-                return entry.row < key.first;
-            }
-
-            return entry.column < key.second;
-        });
-
-    if (iterator != entries_.end() &&
-        iterator->row == row &&
-        iterator->column == column) {
-
-        return iterator->value;
     }
 
     return 0.0;
@@ -219,11 +215,9 @@ std::size_t SparseMatrix::columns() const noexcept
 
 std::size_t SparseMatrix::nonZeros() const noexcept
 {
-    if (finalized_) {
-        return entries_.size();
-    }
-
-    return pending_.size();
+    return finalized_
+        ? entries_.size()
+        : pending_.size();
 }
 
 const std::vector<SparseEntry>&
@@ -235,26 +229,25 @@ SparseMatrix::entries() const noexcept
 std::vector<double> SparseMatrix::multiply(
     const std::vector<double>& vector) const
 {
-    if (vector.size() != columns_) {
+    if (vector.size() != columns_)
+    {
         throw std::invalid_argument(
-            "SparseMatrix::multiply dimension mismatch");
+            "SparseMatrix::multiply dimension mismatch.");
     }
 
-    std::vector<double> result(rows_, 0.0);
+    const auto& source =
+        finalized_ ? entries_ : pending_;
 
-    if (finalized_) {
+    std::vector<double> result(
+        rows_,
+        0.0
+    );
 
-        for (const SparseEntry& entry : entries_) {
-            result[entry.row] +=
-                entry.value * vector[entry.column];
-        }
-
-    } else {
-
-        for (const SparseEntry& entry : pending_) {
-            result[entry.row] +=
-                entry.value * vector[entry.column];
-        }
+    for (const auto& entry : source)
+    {
+        result[entry.row] +=
+            entry.value *
+            vector[entry.column];
     }
 
     return result;
@@ -264,26 +257,25 @@ std::vector<double>
 SparseMatrix::multiplyTranspose(
     const std::vector<double>& vector) const
 {
-    if (vector.size() != rows_) {
+    if (vector.size() != rows_)
+    {
         throw std::invalid_argument(
-            "SparseMatrix::multiplyTranspose dimension mismatch");
+            "SparseMatrix::multiplyTranspose dimension mismatch.");
     }
 
-    std::vector<double> result(columns_, 0.0);
+    const auto& source =
+        finalized_ ? entries_ : pending_;
 
-    if (finalized_) {
+    std::vector<double> result(
+        columns_,
+        0.0
+    );
 
-        for (const SparseEntry& entry : entries_) {
-            result[entry.column] +=
-                entry.value * vector[entry.row];
-        }
-
-    } else {
-
-        for (const SparseEntry& entry : pending_) {
-            result[entry.column] +=
-                entry.value * vector[entry.row];
-        }
+    for (const auto& entry : source)
+    {
+        result[entry.column] +=
+            entry.value *
+            vector[entry.row];
     }
 
     return result;
